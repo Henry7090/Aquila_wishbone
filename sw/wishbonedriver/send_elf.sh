@@ -1,0 +1,1 @@
+cat main.elf > /dev/ttyUSB1

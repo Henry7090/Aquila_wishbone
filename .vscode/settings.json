@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "activation_function.h": "c",
+        "file_read.h": "c",
+        "config.h": "c",
+        "stdlib.h": "c"
+    }
+}
