@@ -17,11 +17,36 @@ int main()
     SDSPI *sdhw = (SDSPI *)SDSPI_ADDR;
     SDSPIDRV *sdcard;
     sdcard = sdspi_init(sdhw);
-    printf("In the main function.\n");
+    // if (sdcard != NULL) {                 
+    //     printf("SD init failed\n");
+    //     free(sdcard);                     
+    //     return -1;
+    // }
 
-    // printf("succes in the function");
-    // print_hello();
-    // int *a = (int *)0xff000000; 
+    printf("SD card is ready!\n");
+
+    // try to read first sector
+    char sector_buf[512];
+    
+
+    char write_buf[512];
+     for (int i = 0; i < 512; i++) {
+        write_buf[i] = 'b';
+    }
+
+    sdspi_write(sdcard, 5000000, 1, write_buf);
+    sdspi_read(sdcard, 5000000, 1, sector_buf);
+
+    
+    
+    // print the sector
+    printf("Start to print the first sector\n");
+    for (int i = 0; i < 512; i++) {
+        printf("%c ", sector_buf[i]);
+        if(i % 8 == 7){
+            printf("\n");
+        }
+    }
     return 0;
 }
 

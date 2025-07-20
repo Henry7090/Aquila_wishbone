@@ -425,7 +425,7 @@ Core2Wishbone_0 (
 sdspi SD_Card_Controller(
 
     .i_clk(clk),
-    .i_sd_reset(~rst),
+    .i_sd_reset(rst),
 	// Wishbone interface
 	.i_wb_cyc(wishbone_cyc),
     .i_wb_stb(wishbone_stb),

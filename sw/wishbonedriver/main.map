@@ -55,135 +55,135 @@ Linker script and memory map
                 0x00000800                        __stack_size = 0x800
                 0x00200000                        __heap_size = 0x200000
 
-.text           0x80001000     0x688c
+.text           0x80001000     0x68b8
  *(.text*)
  .text          0x80001000        0x0 main.o
- .text.startup  0x80001000       0x3c main.o
+ .text.startup  0x80001000      0x114 main.o
                 0x80001000                main
- .text          0x8000103c      0x378 file_read.o
-                0x8000103c                read_images
-                0x800012c4                read_labels
-                0x80001340                read_weights
- .text          0x800013b4      0xb88 ./sdspidriver/sdspidrv.o
-                0x800013b4                sdspi_init
-                0x80001ca8                sdspi_read
-                0x80001db4                sdspi_write
-                0x80001e8c                sdspi_ioctl
-                0x80001f18                print_hello
- .text          0x80001f3c       0x30 ./libelibc.a(crt0.o)
-                0x80001f3c                crt0
- .text          0x80001f6c     0x1124 ./libelibc.a(stdio.o)
-                0x80001f6c                getchar
-                0x80001f84                putchar
-                0x80001fb0                fputs
-                0x80002040                fgets
-                0x80002108                putd
-                0x8000247c                putx
-                0x8000289c                putld
-                0x80002afc                putf
-                0x80002cb8                printf
- .text          0x80003090      0x2c0 ./libelibc.a(stdlib.o)
-                0x80003090                exit
-                0x800030dc                malloc
-                0x80003204                free
-                0x80003230                calloc
-                0x8000326c                atoi
-                0x80003304                abs
-                0x80003314                srand
-                0x80003320                rand
- .text          0x80003350      0x4e8 ./libelibc.a(string.o)
-                0x80003350                memcpy
-                0x800033f4                memmove
-                0x800034d8                memset
-                0x800035c8                strlen
-                0x800035f0                strcpy
-                0x80003618                strncpy
-                0x80003720                strcat
-                0x80003764                strncat
-                0x800037b8                strcmp
-                0x800037f4                strncmp
- .text          0x80003838       0x70 ./libelibc.a(uart.o)
-                0x80003838                inbyte
-                0x8000385c                outbyte
- .text          0x800038a8      0x8f4 ./libelibc.a(fat32.o)
-                0x800038a8                copy_file
-                0x80003aac                get_next_cluster
-                0x80003b34                get_partition_first_lba
-                0x80003cbc                long2short
-                0x80003f54                read_file
- .text          0x8000419c      0xb90 ./libelibc.a(sd.o)
-                0x8000419c                sd_dummy
-                0x800041a4                sd_cmd
-                0x8000423c                print_status
-                0x80004240                sd_cmd0
-                0x8000431c                sd_cmd8
-                0x80004440                sd_cmd55
-                0x800044c8                sd_acmd41
-                0x800045e4                init_sd
-                0x800047e8                crc7
-                0x80004810                crc16
-                0x8000486c                sd_copy
-                0x80004ab4                sd_write
- .text          0x80004d2c      0x1c8 ./libelibc.a(spi.o)
-                0x80004d2c                write_reg
-                0x80004d34                read_reg
-                0x80004d3c                spi_init
-                0x80004da0                spi_txrx
-                0x80004e20                spi_write_bytes
- .text          0x80004ef4      0x430 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_udivdi3.o)
-                0x80004ef4                __udivdi3
- .text          0x80005324      0x794 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(adddf3.o)
-                0x80005324                __adddf3
- .text          0x80005ab8      0x6dc /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(divdf3.o)
-                0x80005ab8                __divdf3
- .text          0x80006194       0xdc /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(ledf2.o)
-                0x80006194                __ltdf2
-                0x80006194                __ledf2
- .text          0x80006270      0x5f0 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(muldf3.o)
-                0x80006270                __muldf3
- .text          0x80006860      0x7a8 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(subdf3.o)
-                0x80006860                __subdf3
- .text          0x80007008       0x7c /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(fixunsdfsi.o)
-                0x80007008                __fixunsdfsi
- .text          0x80007084       0x80 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(floatunsidf.o)
-                0x80007084                __floatunsidf
- .text          0x80007104       0xa8 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(fixunsdfdi.o)
-                0x80007104                __fixunsdfdi
- .text          0x800071ac      0x32c /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(divsf3.o)
-                0x800071ac                __divsf3
- .text          0x800074d8       0xdc /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(floatunsisf.o)
-                0x800074d8                __floatunsisf
- .text          0x800075b4       0xdc /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(extendsfdf2.o)
-                0x800075b4                __extendsfdf2
- .text          0x80007690      0x178 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(truncdfsf2.o)
-                0x80007690                __truncdfsf2
- .text          0x80007808       0x38 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_ashldi3.o)
-                0x80007808                __ashldi3
- .text          0x80007840        0x0 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_clz.o)
- .text          0x80007840       0x4c /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_clzsi2.o)
-                0x80007840                __clzsi2
+ .text          0x80001114      0x378 file_read.o
+                0x80001114                read_images
+                0x8000139c                read_labels
+                0x80001418                read_weights
+ .text          0x8000148c      0xadc ./sdspidriver/sdspidrv.o
+                0x8000148c                sdspi_init
+                0x80001d9c                sdspi_read
+                0x80001de0                sdspi_write
+                0x80001eb8                sdspi_ioctl
+                0x80001f44                print_hello
+ .text          0x80001f68       0x30 ./libelibc.a(crt0.o)
+                0x80001f68                crt0
+ .text          0x80001f98     0x1124 ./libelibc.a(stdio.o)
+                0x80001f98                getchar
+                0x80001fb0                putchar
+                0x80001fdc                fputs
+                0x8000206c                fgets
+                0x80002134                putd
+                0x800024a8                putx
+                0x800028c8                putld
+                0x80002b28                putf
+                0x80002ce4                printf
+ .text          0x800030bc      0x2c0 ./libelibc.a(stdlib.o)
+                0x800030bc                exit
+                0x80003108                malloc
+                0x80003230                free
+                0x8000325c                calloc
+                0x80003298                atoi
+                0x80003330                abs
+                0x80003340                srand
+                0x8000334c                rand
+ .text          0x8000337c      0x4e8 ./libelibc.a(string.o)
+                0x8000337c                memcpy
+                0x80003420                memmove
+                0x80003504                memset
+                0x800035f4                strlen
+                0x8000361c                strcpy
+                0x80003644                strncpy
+                0x8000374c                strcat
+                0x80003790                strncat
+                0x800037e4                strcmp
+                0x80003820                strncmp
+ .text          0x80003864       0x70 ./libelibc.a(uart.o)
+                0x80003864                inbyte
+                0x80003888                outbyte
+ .text          0x800038d4      0x8f4 ./libelibc.a(fat32.o)
+                0x800038d4                copy_file
+                0x80003ad8                get_next_cluster
+                0x80003b60                get_partition_first_lba
+                0x80003ce8                long2short
+                0x80003f80                read_file
+ .text          0x800041c8      0xb90 ./libelibc.a(sd.o)
+                0x800041c8                sd_dummy
+                0x800041d0                sd_cmd
+                0x80004268                print_status
+                0x8000426c                sd_cmd0
+                0x80004348                sd_cmd8
+                0x8000446c                sd_cmd55
+                0x800044f4                sd_acmd41
+                0x80004610                init_sd
+                0x80004814                crc7
+                0x8000483c                crc16
+                0x80004898                sd_copy
+                0x80004ae0                sd_write
+ .text          0x80004d58      0x1c8 ./libelibc.a(spi.o)
+                0x80004d58                write_reg
+                0x80004d60                read_reg
+                0x80004d68                spi_init
+                0x80004dcc                spi_txrx
+                0x80004e4c                spi_write_bytes
+ .text          0x80004f20      0x430 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_udivdi3.o)
+                0x80004f20                __udivdi3
+ .text          0x80005350      0x794 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(adddf3.o)
+                0x80005350                __adddf3
+ .text          0x80005ae4      0x6dc /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(divdf3.o)
+                0x80005ae4                __divdf3
+ .text          0x800061c0       0xdc /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(ledf2.o)
+                0x800061c0                __ltdf2
+                0x800061c0                __ledf2
+ .text          0x8000629c      0x5f0 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(muldf3.o)
+                0x8000629c                __muldf3
+ .text          0x8000688c      0x7a8 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(subdf3.o)
+                0x8000688c                __subdf3
+ .text          0x80007034       0x7c /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(fixunsdfsi.o)
+                0x80007034                __fixunsdfsi
+ .text          0x800070b0       0x80 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(floatunsidf.o)
+                0x800070b0                __floatunsidf
+ .text          0x80007130       0xa8 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(fixunsdfdi.o)
+                0x80007130                __fixunsdfdi
+ .text          0x800071d8      0x32c /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(divsf3.o)
+                0x800071d8                __divsf3
+ .text          0x80007504       0xdc /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(floatunsisf.o)
+                0x80007504                __floatunsisf
+ .text          0x800075e0       0xdc /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(extendsfdf2.o)
+                0x800075e0                __extendsfdf2
+ .text          0x800076bc      0x178 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(truncdfsf2.o)
+                0x800076bc                __truncdfsf2
+ .text          0x80007834       0x38 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_ashldi3.o)
+                0x80007834                __ashldi3
+ .text          0x8000786c        0x0 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_clz.o)
+ .text          0x8000786c       0x4c /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_clzsi2.o)
+                0x8000786c                __clzsi2
 
-.srodata.cst4   0x8000788c        0x4
- .srodata.cst4  0x8000788c        0x4 file_read.o
+.srodata.cst4   0x800078b8        0x4
+ .srodata.cst4  0x800078b8        0x4 file_read.o
 
-.srodata.cst8   0x80007890       0x28
- .srodata.cst8  0x80007890       0x28 file_read.o
+.srodata.cst8   0x800078c0       0x28
+ .srodata.cst8  0x800078c0       0x28 file_read.o
                                  0x10 (size before relaxing)
- .srodata.cst8  0x800078b8       0x18 ./libelibc.a(stdio.o)
+ .srodata.cst8  0x800078e8       0x18 ./libelibc.a(stdio.o)
 
-.srodata        0x800078b8        0xc
- .srodata       0x800078b8        0x4 ./sdspidriver/sdspidrv.o
-                0x800078b8                SDUSEDMA
- .srodata       0x800078bc        0x8 ./libelibc.a(stdlib.o)
+.srodata        0x800078e8        0xc
+ .srodata       0x800078e8        0x4 ./sdspidriver/sdspidrv.o
+                0x800078e8                SDUSEDMA
+ .srodata       0x800078ec        0x8 ./libelibc.a(stdlib.o)
 
-.eh_frame       0x800078c4       0x28
- .eh_frame      0x800078c4       0x28 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_udivdi3.o)
+.eh_frame       0x800078f4       0x28
+ .eh_frame      0x800078f4       0x28 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_udivdi3.o)
 
-.rela.dyn       0x800078ec        0x0
- .rela.sdata    0x800078ec        0x0 main.o
- .rela.srodata  0x800078ec        0x0 main.o
+.rela.dyn       0x8000791c        0x0
+ .rela.sdata    0x8000791c        0x0 main.o
+ .rela.srodata  0x8000791c        0x0 main.o
 
-.data           0x80011000     0x1240
+.data           0x80011000     0x12a0
  *(.data)
  .data          0x80011000        0x0 main.o
  .data          0x80011000        0x0 file_read.o
@@ -242,53 +242,53 @@ Linker script and memory map
  .bss           0x80011a80        0x0 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_clzsi2.o)
  *(.rodata*)
  .rodata.str1.4
-                0x80011a80      0x51a main.o
-                                 0x17 (size before relaxing)
+                0x80011a80      0x57a main.o
+                                 0x56 (size before relaxing)
  .rodata.str1.4
-                0x80011f9a       0x40 file_read.o
+                0x80011ffa       0x40 file_read.o
  .rodata.str1.4
-                0x80011f9a      0x324 ./sdspidriver/sdspidrv.o
+                0x80011ffa      0x358 ./sdspidriver/sdspidrv.o
  .rodata.str1.4
-                0x80011f9a       0x7d ./libelibc.a(stdio.o)
- *fill*         0x80011f9a        0x2 
- .rodata        0x80011f9c       0x84 ./libelibc.a(stdio.o)
- .rodata        0x80012020       0xa8 ./libelibc.a(stdlib.o)
+                0x80011ffa       0x7d ./libelibc.a(stdio.o)
+ *fill*         0x80011ffa        0x2 
+ .rodata        0x80011ffc       0x84 ./libelibc.a(stdio.o)
+ .rodata        0x80012080       0xa8 ./libelibc.a(stdlib.o)
  .rodata.str1.4
-                0x800120c8       0xe3 ./libelibc.a(fat32.o)
+                0x80012128       0xe3 ./libelibc.a(fat32.o)
  .rodata.str1.4
-                0x800120c8       0x3a ./libelibc.a(sd.o)
- .rodata        0x800120c8       0x3c /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(divdf3.o)
- .rodata        0x80012104       0x3c /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(divsf3.o)
- .rodata        0x80012140      0x100 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_clz.o)
-                0x80012140                __clz_tab
+                0x80012128       0x3a ./libelibc.a(sd.o)
+ .rodata        0x80012128       0x3c /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(divdf3.o)
+ .rodata        0x80012164       0x3c /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(divsf3.o)
+ .rodata        0x800121a0      0x100 /opt/riscv/lib/gcc/riscv32-unknown-elf/13.2.0/libgcc.a(_clz.o)
+                0x800121a0                __clz_tab
 
-.sdata          0x80012240       0x30
- .sdata         0x80012240        0x4 file_read.o
-                0x80012240                fbuf
- .sdata         0x80012244        0x4 ./libelibc.a(crt0.o)
-                0x80012244                stack_top
- .sdata         0x80012248       0x1c ./libelibc.a(stdio.o)
-                0x80012248                stderr
-                0x8001224c                stdout
-                0x80012250                stdin
- .sdata         0x80012264        0xc ./libelibc.a(stdlib.o)
+.sdata          0x800122a0       0x30
+ .sdata         0x800122a0        0x4 file_read.o
+                0x800122a0                fbuf
+ .sdata         0x800122a4        0x4 ./libelibc.a(crt0.o)
+                0x800122a4                stack_top
+ .sdata         0x800122a8       0x1c ./libelibc.a(stdio.o)
+                0x800122a8                stderr
+                0x800122ac                stdout
+                0x800122b0                stdin
+ .sdata         0x800122c4        0xc ./libelibc.a(stdlib.o)
 
-.sbss           0x80012270       0x10
- .sbss          0x80012270        0x4 ./sdspidriver/sdspidrv.o
-                0x80012270                sdcard_err
- .sbss          0x80012274        0x4 ./libelibc.a(crt0.o)
-                0x80012274                sp_store
- .sbss          0x80012278        0x8 ./libelibc.a(stdio.o)
+.sbss           0x800122d0       0x10
+ .sbss          0x800122d0        0x4 ./sdspidriver/sdspidrv.o
+                0x800122d0                sdcard_err
+ .sbss          0x800122d4        0x4 ./libelibc.a(crt0.o)
+                0x800122d4                sp_store
+ .sbss          0x800122d8        0x8 ./libelibc.a(stdio.o)
 
-.heap           0x80012280   0x200000
-                0x80012280                        __heap_start = .
-                0x80212280                        . = (. + __heap_size)
- *fill*         0x80012280   0x200000 
+.heap           0x800122e0   0x200000
+                0x800122e0                        __heap_start = .
+                0x802122e0                        . = (. + __heap_size)
+ *fill*         0x800122e0   0x200000 
 
-.stack          0x80212280      0x800
-                0x80212a80                        . = (. + __stack_size)
- *fill*         0x80212280      0x800 
-                0x80212a80                        __stack_top = .
+.stack          0x802122e0      0x800
+                0x80212ae0                        . = (. + __stack_size)
+ *fill*         0x802122e0      0x800 
+                0x80212ae0                        __stack_top = .
 LOAD main.o
 LOAD file_read.o
 LOAD ./sdspidriver/sdspidrv.o

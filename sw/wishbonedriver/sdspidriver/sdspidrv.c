@@ -49,7 +49,7 @@ typedef	uint32_t	DWORD, LBA_t, UINT;
 #ifdef	STDIO_DEBUG
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <inttypes.h>
 #define	txstr(A)	printf("%s", A)
 #define	txhex(A)	printf("%08x", A)
 #define	txdecimal(A)	printf("%d", A)
@@ -682,6 +682,8 @@ SDSPIDRV *sdspi_init(SDSPI *dev) {
 	unsigned	v;
 	SDSPIDRV *dv = (SDSPIDRV *)malloc(sizeof(SDSPIDRV));
 	dv->d_dev = dev;
+	printf("dev       = 0x%08X\n", (unsigned int)dev);
+	printf("dv->dev       = 0x%08X\n", (unsigned int)dv->d_dev);
 	dv->d_sector_count = 0;
 	dv->d_block_size   = 0;
 
@@ -1099,7 +1101,7 @@ SDSPIDRV *sdspi_init(SDSPI *dev) {
 
 	// }}}
 
-	return 0;
+	return dv;
 }
 // }}}
 
@@ -1107,7 +1109,11 @@ int	sdspi_read(SDSPIDRV *dev, const unsigned sector, const unsigned count, char 
 	// {{{
 	unsigned	*ubuf = (unsigned *)buf, k;
 	int		j, st = 0;
-
+	uintptr_t ctrl_addr2 = (uintptr_t)&dev;
+	printf("sd_ctrl @ 0x%08" PRIXPTR "\n", ctrl_addr2);
+	uintptr_t ctrl_addr = (uintptr_t)&dev->d_dev->sd_ctrl;
+	printf("sd_ctrl @ 0x%08" PRIXPTR "\n", ctrl_addr);
+	return 0;
 	if (SDDEBUG) {
 		txstr("SDCARD-READ: ");
 		txhex(sector);
@@ -1115,17 +1121,22 @@ int	sdspi_read(SDSPIDRV *dev, const unsigned sector, const unsigned count, char 
 			txstr(", +");
 			txhex(count);
 		} txstr("\r\n");
-	} if (sector + count > dev->d_sector_count)
+	} 
+	if (sector + count > dev->d_sector_count){
+		txstr("RES_PARERR\n");
 		return RES_PARERR;
+	}
 	for(k=0; k<count; k++) {
 		unsigned	*ubuf = (unsigned *)&buf[k*512];
 
+		
+		
+		
 		if (dev->d_dev->sd_ctrl & SDSPI_REMOVED) {
 			txstr("ERR: SD-Card was removed\n");
 			st = RES_ERROR;
 			break;
 		}
-
 		// 512 byte block length, 25MHz clock
 		//
 		// Write config data, read last config data
@@ -1151,8 +1162,8 @@ int	sdspi_read(SDSPIDRV *dev, const unsigned sector, const unsigned count, char 
 			CLEAR_DCACHE;
 		} else
 #endif
-			for(j=0; j<512/4; j++)
-				ubuf[j] = dev->d_dev->sd_fifo[0];
+		for(j=0; j<512/4; j++)
+			ubuf[j] = dev->d_dev->sd_fifo[0];
 
 		if (SDDEBUG && SDINFO)
 			sdspi_dump_sector(ubuf);

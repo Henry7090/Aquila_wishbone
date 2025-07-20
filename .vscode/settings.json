@@ -3,6 +3,8 @@
         "activation_function.h": "c",
         "file_read.h": "c",
         "config.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "inttypes.h": "c",
+        "sdspidrv.h": "c"
     }
 }
