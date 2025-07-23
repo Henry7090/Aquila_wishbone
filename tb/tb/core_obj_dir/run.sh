@@ -1,0 +1,1 @@
+./Vaquila_testharness ../../../sw/wishbonedriver/main.elf

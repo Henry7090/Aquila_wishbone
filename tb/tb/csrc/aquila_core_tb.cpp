@@ -191,7 +191,7 @@ void uart_send(uint8_t data)
 
 int main(int argc, char **argv)
 {
-    const char	SDIMAGE_FILENAME[] = "sdcard.img";
+    const char	SDIMAGE_FILENAME[] = "/home/henry7090/Downloads/Aquila_wishbone/sdcard.img";
     m_sdspi = new SDSPISIM(true);
     m_sdspi->load(SDIMAGE_FILENAME);
 

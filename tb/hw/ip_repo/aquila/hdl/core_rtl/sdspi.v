@@ -315,12 +315,21 @@ module	sdspi #(
 	spicmd
 	spicmdi(
 		// {{{
-		i_clk, w_reset, (wb_cmd_stb && wb_data[7:6] == 2'b01),
-			wb_data[9:8], wb_data[5:0], r_data_reg, cmd_busy,
-		cmd_out_stb, cmd_out_byte, !ll_advance,
-		ll_out_stb, ll_out_dat,
+		i_clk, 
+		w_reset, 
+		(wb_cmd_stb && wb_data[7:6] == 2'b01),
+		wb_data[9:8], 
+		wb_data[5:0], 
+		r_data_reg, 
+		cmd_busy,
+		cmd_out_stb, 
+		cmd_out_byte, 
+		!ll_advance,
+		ll_out_stb, 
+		ll_out_dat,
 		cmd_sent,
-		cmd_valid, cmd_response
+		cmd_valid, 
+		cmd_response
 		// }}}
 	);
 	// }}}
@@ -336,11 +345,19 @@ module	sdspi #(
 		.OPT_LITTLE_ENDIAN(OPT_LITTLE_ENDIAN)
 	) spirxdatai(
 		// {{{
-		i_clk, w_reset | r_cmd_err, rx_start,
-			r_lgblklen, r_fifo_id, rx_busy,
-		ll_out_stb && !cmd_busy, ll_out_dat,
-		spi_write_to_fifo, spi_write_addr, spi_write_data,
-		rx_valid, rx_response
+		i_clk, 
+		w_reset | r_cmd_err, 
+		rx_start,
+		r_lgblklen, 
+		r_fifo_id, 
+		rx_busy,
+		ll_out_stb && !cmd_busy, 
+		ll_out_dat,
+		spi_write_to_fifo, 
+		spi_write_addr, 
+		spi_write_data,
+		rx_valid, 
+		rx_response
 		// }}}
 	);
 	// }}}
@@ -357,12 +374,21 @@ module	sdspi #(
 		.OPT_LITTLE_ENDIAN(OPT_LITTLE_ENDIAN)
 	) spitxdatai(
 		// {{{
-		i_clk, w_reset | r_cmd_err, tx_start,
-			r_lgblklen, r_fifo_id, tx_busy,
-		spi_read_from_fifo, spi_read_addr, spi_read_data,
-		!ll_advance || cmd_busy, tx_stb, tx_byte,
-		ll_out_stb && !cmd_busy, ll_out_dat,
-		tx_valid, tx_response
+		i_clk, 
+		w_reset | r_cmd_err, 
+		tx_start,
+		r_lgblklen, 
+		r_fifo_id, 
+		tx_busy,
+		spi_read_from_fifo, 
+		spi_read_addr, 
+		spi_read_data,
+		!ll_advance || cmd_busy, 
+		tx_stb, tx_byte,
+		ll_out_stb && !cmd_busy, 
+		ll_out_dat,
+		tx_valid, 
+		tx_response
 		// }}}
 	);
 	// }}}

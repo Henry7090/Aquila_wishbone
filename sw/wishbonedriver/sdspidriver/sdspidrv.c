@@ -45,11 +45,11 @@ typedef	uint8_t		BYTE;
 typedef	uint16_t	WORD;
 typedef	uint32_t	DWORD, LBA_t, UINT;
 #include <diskio.h>
-
+#include <inttypes.h>
 #ifdef	STDIO_DEBUG
 #include <stdio.h>
 #include <stdlib.h>
-#include <inttypes.h>
+
 #define	txstr(A)	printf("%s", A)
 #define	txhex(A)	printf("%08x", A)
 #define	txdecimal(A)	printf("%d", A)
@@ -149,7 +149,7 @@ int	sdcard_err = 0;
 //
 // If set will produce verbose output via txstr() and txhex().  These functions
 // are roughly equivalent to printf("%s",X) and printf("%08x", X) respectively.
-static const int	SDDEBUG = 0;
+static const int	SDDEBUG = 1;
 
 //
 // SDINFO
@@ -546,6 +546,7 @@ static	int	sdspi_read_cid(SDSPIDRV *dev) {
 				dev->d_CID[6], dev->d_CID[7],
 		(dev->d_CID[8]>>4)&0xf, dev->d_CID[8]&0x0f,
 		sn);
+
 		printf(
 "\tYear of Man.:     %d\n"
 "\tMonth of Man.:    %d\n",
@@ -682,8 +683,6 @@ SDSPIDRV *sdspi_init(SDSPI *dev) {
 	unsigned	v;
 	SDSPIDRV *dv = (SDSPIDRV *)malloc(sizeof(SDSPIDRV));
 	dv->d_dev = dev;
-	printf("dev       = 0x%08X\n", (unsigned int)dev);
-	printf("dv->dev       = 0x%08X\n", (unsigned int)dv->d_dev);
 	dv->d_sector_count = 0;
 	dv->d_block_size   = 0;
 
@@ -696,7 +695,7 @@ SDSPIDRV *sdspi_init(SDSPI *dev) {
 		txstr("SDCARD-INIT\n");
 
 	// Start us out slow, with a known sector length
-	dev->sd_data = SECTOR_512B | SPEED_SLOW;	// 128 word block length, 400kHz clock // 9007c
+	dev->sd_data = SECTOR_512B | SPEED_SLOW;	// 128 word block length, 400kHz clock
 	dev->sd_ctrl = SDSPI_SETAUX; // Write config data, read last config data
 
 	// Clear any prior pending errors
@@ -981,8 +980,21 @@ SDSPIDRV *sdspi_init(SDSPI *dev) {
 		dv->d_block_size   = 0;
 		return dv;
 	}
+	// unsigned	*ucsd = (unsigned *)dv->d_CSD;
+	// txstr("CSD: ");
+	// txhex(ucsd[0]);
+	// txstr(":");
+	// txhex(ucsd[1]);
+	// txstr(":");
+	// txhex(ucsd[2]);
+	// txstr(":");
+	// txhex(ucsd[3]);
+	// txstr("\n");
+	unsigned int value = (unsigned char)dv->d_CSD[0];
+	printf("0x%02X\n", value);
 
 	if (0x00 == (dv->d_CSD[0] & 0xc0)) {
+		printf("Standard capacity card\n");
 		// {{{
 		// Standard capacity card, CSD v1
 		//
@@ -1009,7 +1021,7 @@ SDSPIDRV *sdspi_init(SDSPI *dev) {
 		// gbl_sector_size = BLOCK_LEN;
 		BLOCKNR  = (C_SIZE+1ul) * (1ul << (C_SIZE_MULT+2));
 		dv->d_sector_count = BLOCKNR;
-
+		printf("BLOCKNR = %d\n",BLOCKNR);
 		// Get the size of an erasable sector
 		SECTOR_SIZE  = (dv->d_CSD[10]& 0x0ff);
 		SECTOR_SIZE |= (dv->d_CSD[11]& 0x0ff) | (SECTOR_SIZE << 8);
@@ -1098,9 +1110,12 @@ SDSPIDRV *sdspi_init(SDSPI *dev) {
 		dv->d_block_size   = 0;
 		return dv;
 	}
-
+	printf("dv->d_OCR = %d\n", dv->d_OCR);
+	printf("dv->d_sector_count = %d\n", dv->d_sector_count);
+	printf("dv->d_block_size = %d\n", dv->d_block_size);
 	// }}}
-
+	uintptr_t ctrl_addr2 = (uintptr_t)&dev;
+	printf("sd_ctrl @ 0x%08" PRIXPTR "\n", ctrl_addr2);
 	return dv;
 }
 // }}}
@@ -1109,11 +1124,10 @@ int	sdspi_read(SDSPIDRV *dev, const unsigned sector, const unsigned count, char 
 	// {{{
 	unsigned	*ubuf = (unsigned *)buf, k;
 	int		j, st = 0;
-	uintptr_t ctrl_addr2 = (uintptr_t)&dev;
-	printf("sd_ctrl @ 0x%08" PRIXPTR "\n", ctrl_addr2);
-	uintptr_t ctrl_addr = (uintptr_t)&dev->d_dev->sd_ctrl;
-	printf("sd_ctrl @ 0x%08" PRIXPTR "\n", ctrl_addr);
-	return 0;
+	printf("dv->d_OCR = %d\n", dev->d_OCR);
+	printf("dv->d_sector_count = %d\n", dev->d_sector_count);
+	printf("dv->d_block_size = %d\n", dev->d_block_size);
+
 	if (SDDEBUG) {
 		txstr("SDCARD-READ: ");
 		txhex(sector);
@@ -1121,22 +1135,19 @@ int	sdspi_read(SDSPIDRV *dev, const unsigned sector, const unsigned count, char 
 			txstr(", +");
 			txhex(count);
 		} txstr("\r\n");
-	} 
-	if (sector + count > dev->d_sector_count){
-		txstr("RES_PARERR\n");
+	} if (sector + count > dev->d_sector_count){
+		printf("RES_PARERR\n");
 		return RES_PARERR;
 	}
 	for(k=0; k<count; k++) {
 		unsigned	*ubuf = (unsigned *)&buf[k*512];
 
-		
-		
-		
 		if (dev->d_dev->sd_ctrl & SDSPI_REMOVED) {
 			txstr("ERR: SD-Card was removed\n");
 			st = RES_ERROR;
 			break;
 		}
+
 		// 512 byte block length, 25MHz clock
 		//
 		// Write config data, read last config data
@@ -1162,8 +1173,8 @@ int	sdspi_read(SDSPIDRV *dev, const unsigned sector, const unsigned count, char 
 			CLEAR_DCACHE;
 		} else
 #endif
-		for(j=0; j<512/4; j++)
-			ubuf[j] = dev->d_dev->sd_fifo[0];
+			for(j=0; j<512/4; j++)
+				ubuf[j] = dev->d_dev->sd_fifo[0];
 
 		if (SDDEBUG && SDINFO)
 			sdspi_dump_sector(ubuf);
@@ -1294,9 +1305,3 @@ int	sdspi_ioctl(SDSPIDRV *dev, char cmd, char *buf) {
 	return	RES_PARERR;
 }
 // }}}
-
-
-int print_hello(){
-	printf("hello world in sdspidriver\n");
-	return 0;
-}

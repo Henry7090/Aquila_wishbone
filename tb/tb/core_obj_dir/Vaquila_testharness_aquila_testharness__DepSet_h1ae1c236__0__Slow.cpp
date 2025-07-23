@@ -116,6 +116,8 @@ VL_ATTR_COLD void Vaquila_testharness_aquila_testharness___ctor_var_reset(Vaquil
     vlSelf->__PVT__wishbone_ack = VL_RAND_RESET_I(1);
     vlSelf->__PVT__wishbone_data2core = VL_RAND_RESET_I(32);
     vlSelf->__Vcellinp__Core2Wishbone_0__S_DEVICE_strobe_i = VL_RAND_RESET_I(1);
+    vlSelf->__PVT__Core2Wishbone_0__DOT__wb_stb_r = VL_RAND_RESET_I(1);
+    vlSelf->__PVT__Core2Wishbone_0__DOT__wb_stb = VL_RAND_RESET_I(1);
     vlSelf->__PVT__SD_Card_Controller__DOT__o_int = VL_RAND_RESET_I(1);
     vlSelf->__PVT__SD_Card_Controller__DOT__o_debug = VL_RAND_RESET_I(32);
     vlSelf->__PVT__SD_Card_Controller__DOT__r_cmd_busy = VL_RAND_RESET_I(1);

@@ -95,16 +95,18 @@ always @(posedge clk_i)begin
 end
 
 //  wb_stb_o
+reg wb_stb_r;
+wire wb_stb;
 always @(posedge clk_i)begin
-    if (rst_i)
-        wb_stb_o <= 0;
-    else if(S_DEVICE_strobe_i)
-        wb_stb_o <= 1;
-    else if(wb_ack_i)
-        wb_stb_o <= 0;
-    else 
-        wb_stb_o <= wb_stb_o;
+    wb_stb_r <= wb_stb;
 end
+always @(posedge clk_i)begin
+    if(rst_i) wb_stb_o <= 0;
+    else if(wb_stb && !wb_stb_r) wb_stb_o <= 1;
+    else wb_stb_o <= 0;
+end
+
+assign wb_stb = S_DEVICE_strobe_i && wb_ack_i == 0;
 
 //  wb_we_o
 always @(posedge clk_i)begin

@@ -43,6 +43,8 @@ class Vaquila_testharness_aquila_testharness final : public VerilatedModule {
         CData/*1:0*/ __PVT__wishbone_addr;
         CData/*0:0*/ __PVT__wishbone_ack;
         CData/*0:0*/ __Vcellinp__Core2Wishbone_0__S_DEVICE_strobe_i;
+        CData/*0:0*/ __PVT__Core2Wishbone_0__DOT__wb_stb_r;
+        CData/*0:0*/ __PVT__Core2Wishbone_0__DOT__wb_stb;
         CData/*0:0*/ __PVT__SD_Card_Controller__DOT__o_int;
         CData/*0:0*/ __PVT__SD_Card_Controller__DOT__r_cmd_busy;
         CData/*0:0*/ __PVT__SD_Card_Controller__DOT__dbg_trigger;
@@ -87,10 +89,10 @@ class Vaquila_testharness_aquila_testharness final : public VerilatedModule {
         CData/*0:0*/ __PVT__SD_Card_Controller__DOT__tx_busy;
         CData/*7:0*/ __PVT__SD_Card_Controller__DOT__tx_response;
         CData/*0:0*/ __PVT__SD_Card_Controller__DOT__last_busy;
-        CData/*0:0*/ SD_Card_Controller__DOT____Vcellinp__spicmdi____pinNumber3;
-        CData/*0:0*/ SD_Card_Controller__DOT____Vcellinp__spirxdatai____pinNumber7;
     };
     struct {
+        CData/*0:0*/ SD_Card_Controller__DOT____Vcellinp__spicmdi____pinNumber3;
+        CData/*0:0*/ SD_Card_Controller__DOT____Vcellinp__spirxdatai____pinNumber7;
         CData/*0:0*/ SD_Card_Controller__DOT____Vcellinp__spirxdatai____pinNumber2;
         CData/*0:0*/ SD_Card_Controller__DOT____Vcellinp__spitxdatai____pinNumber13;
         CData/*0:0*/ SD_Card_Controller__DOT____Vcellinp__spitxdatai____pinNumber10;
@@ -153,10 +155,10 @@ class Vaquila_testharness_aquila_testharness final : public VerilatedModule {
         SData/*15:0*/ __PVT__SD_Card_Controller__DOT__spirxdatai__DOT__next_crc_data;
         SData/*15:0*/ __PVT__SD_Card_Controller__DOT__spirxdatai__DOT__crc_data;
         SData/*15:0*/ __PVT__SD_Card_Controller__DOT__spirxdatai__DOT__first_crc_data;
-        SData/*15:0*/ __PVT__SD_Card_Controller__DOT__spitxdatai__DOT__crc_data;
-        SData/*15:0*/ __PVT__SD_Card_Controller__DOT__spitxdatai__DOT__next_crc_data;
     };
     struct {
+        SData/*15:0*/ __PVT__SD_Card_Controller__DOT__spitxdatai__DOT__crc_data;
+        SData/*15:0*/ __PVT__SD_Card_Controller__DOT__spitxdatai__DOT__next_crc_data;
         VL_IN(main_memory_addr,31,0);
         VL_OUT(cur_instr_addr,31,0);
         IData/*31:0*/ debug_pc;

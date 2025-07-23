@@ -23,7 +23,6 @@ VL_INLINE_OPT void Vaquila_testharness_aquila_testharness___sequent__TOP__aquila
     SData/*8:0*/ __Vtableidx1;
     SData/*9:0*/ __Vtableidx2;
     CData/*0:0*/ __Vdly__wishbone_cyc;
-    CData/*0:0*/ __Vdly__wishbone_stb;
     CData/*0:0*/ __Vdly__wishbone_we;
     CData/*1:0*/ __Vdly__wishbone_addr;
     CData/*6:0*/ __Vdly__SD_Card_Controller__DOT__fifo_wb_addr;
@@ -112,7 +111,6 @@ VL_INLINE_OPT void Vaquila_testharness_aquila_testharness___sequent__TOP__aquila
         = vlSelf->__PVT__SD_Card_Controller__DOT__GEN_CARD_DETECT__DOT__card_detect_counter;
     __Vdly__SD_Card_Controller__DOT__lowlevel__DOT__WAIT_FOR_POWERUP__DOT__powerup_counter 
         = vlSelf->__PVT__SD_Card_Controller__DOT__lowlevel__DOT__WAIT_FOR_POWERUP__DOT__powerup_counter;
-    __Vdly__SD_Card_Controller__DOT__fifo_wb_addr = vlSelf->__PVT__SD_Card_Controller__DOT__fifo_wb_addr;
     __Vdly__SD_Card_Controller__DOT__spitxdatai__DOT__lastaddr 
         = vlSelf->__PVT__SD_Card_Controller__DOT__spitxdatai__DOT__lastaddr;
     __Vdly__SD_Card_Controller__DOT__spirxdatai__DOT__lastaddr 
@@ -129,6 +127,7 @@ VL_INLINE_OPT void Vaquila_testharness_aquila_testharness___sequent__TOP__aquila
         = vlSelf->__PVT__SD_Card_Controller__DOT__spitxdatai__DOT__crc_stb;
     __Vdly__SD_Card_Controller__DOT__spicmdi__DOT__shift_data 
         = vlSelf->__PVT__SD_Card_Controller__DOT__spicmdi__DOT__shift_data;
+    __Vdly__SD_Card_Controller__DOT__fifo_wb_addr = vlSelf->__PVT__SD_Card_Controller__DOT__fifo_wb_addr;
     __Vdly__SD_Card_Controller__DOT__lowlevel__DOT__r_clk_counter 
         = vlSelf->__PVT__SD_Card_Controller__DOT__lowlevel__DOT__r_clk_counter;
     __Vdly__SD_Card_Controller__DOT__lowlevel__DOT__WAIT_FOR_STARTUP__DOT__startup_counter 
@@ -155,7 +154,6 @@ VL_INLINE_OPT void Vaquila_testharness_aquila_testharness___sequent__TOP__aquila
     __Vdly__SD_Card_Controller__DOT__cmd_busy = vlSelf->__PVT__SD_Card_Controller__DOT__cmd_busy;
     __Vdly__spi_sck = vlSelf->spi_sck;
     __Vdly__wishbone_cyc = vlSelf->__PVT__wishbone_cyc;
-    __Vdly__wishbone_stb = vlSelf->__PVT__wishbone_stb;
     __Vdly__wishbone_we = vlSelf->__PVT__wishbone_we;
     __Vdly__SD_Card_Controller__DOT__r_cmd_err = vlSelf->__PVT__SD_Card_Controller__DOT__r_cmd_err;
     __Vdlyvset__SD_Card_Controller__DOT__fifo_b__v0 = 0U;
@@ -200,15 +198,6 @@ VL_INLINE_OPT void Vaquila_testharness_aquila_testharness___sequent__TOP__aquila
         __Vdly__SD_Card_Controller__DOT__spirxdatai__DOT__fill 
             = (1U | (6U & ((IData)(vlSelf->__PVT__SD_Card_Controller__DOT__spirxdatai__DOT__fill) 
                            << 1U)));
-    }
-    if (((IData)(vlSelf->__PVT__SD_Card_Controller__DOT__write_stb) 
-         & (0U == (IData)(vlSelf->__PVT__wishbone_addr)))) {
-        __Vdly__SD_Card_Controller__DOT__fifo_wb_addr = 0U;
-    } else if (((IData)(vlSelf->__PVT__wishbone_stb) 
-                & (((IData)(vlSelf->__PVT__wishbone_addr) 
-                    >> 1U) & (0U != (IData)(vlSymsp->TOP__aquila_testharness__aquila_core__RISCV_CORE0.__PVT__mem_byte_sel))))) {
-        __Vdly__SD_Card_Controller__DOT__fifo_wb_addr 
-            = (0x7fU & ((IData)(1U) + (IData)(vlSelf->__PVT__SD_Card_Controller__DOT__fifo_wb_addr)));
     }
     __Vdly__SD_Card_Controller__DOT__spi_write_to_fifo 
         = ((~ ((IData)(vlSelf->SD_Card_Controller__DOT____Vcellinp__spirxdatai____pinNumber2) 
@@ -265,6 +254,15 @@ VL_INLINE_OPT void Vaquila_testharness_aquila_testharness___sequent__TOP__aquila
                    | ((QData)((IData)(vlSelf->__PVT__SD_Card_Controller__DOT__spicmdi__DOT__crc_byte)) 
                       << 0x20U));
         }
+    }
+    if (((IData)(vlSelf->__PVT__SD_Card_Controller__DOT__write_stb) 
+         & (0U == (IData)(vlSelf->__PVT__wishbone_addr)))) {
+        __Vdly__SD_Card_Controller__DOT__fifo_wb_addr = 0U;
+    } else if (((IData)(vlSelf->__PVT__wishbone_stb) 
+                & (((IData)(vlSelf->__PVT__wishbone_addr) 
+                    >> 1U) & (0U != (IData)(vlSymsp->TOP__aquila_testharness__aquila_core__RISCV_CORE0.__PVT__mem_byte_sel))))) {
+        __Vdly__SD_Card_Controller__DOT__fifo_wb_addr 
+            = (0x7fU & ((IData)(1U) + (IData)(vlSelf->__PVT__SD_Card_Controller__DOT__fifo_wb_addr)));
     }
     if (vlSelf->__PVT__SD_Card_Controller__DOT__lowlevel__DOT__r_z_counter) {
         if (vlSelf->__PVT__SD_Card_Controller__DOT__lowlevel__DOT__restart_counter) {
@@ -457,10 +455,6 @@ VL_INLINE_OPT void Vaquila_testharness_aquila_testharness___sequent__TOP__aquila
                             & ((IData)(vlSelf->__Vcellinp__Core2Wishbone_0__S_DEVICE_strobe_i) 
                                | ((~ (IData)(vlSelf->__PVT__wishbone_ack)) 
                                   & (IData)(vlSelf->__PVT__wishbone_cyc))));
-    __Vdly__wishbone_stb = ((IData)(vlSymsp->TOP.rst_n) 
-                            & ((IData)(vlSelf->__Vcellinp__Core2Wishbone_0__S_DEVICE_strobe_i) 
-                               | ((~ (IData)(vlSelf->__PVT__wishbone_ack)) 
-                                  & (IData)(vlSelf->__PVT__wishbone_stb))));
     __Vdly__wishbone_we = ((IData)(vlSymsp->TOP.rst_n) 
                            & (((IData)(vlSelf->__Vcellinp__Core2Wishbone_0__S_DEVICE_strobe_i) 
                                & (IData)(vlSymsp->TOP__aquila_testharness__aquila_core.__PVT__M_DEVICE_rw_o)) 
@@ -1252,7 +1246,6 @@ VL_INLINE_OPT void Vaquila_testharness_aquila_testharness___sequent__TOP__aquila
     vlSelf->__PVT__SD_Card_Controller__DOT__fifo_wb_addr 
         = __Vdly__SD_Card_Controller__DOT__fifo_wb_addr;
     vlSelf->__PVT__wishbone_cyc = __Vdly__wishbone_cyc;
-    vlSelf->__PVT__wishbone_stb = __Vdly__wishbone_stb;
     vlSelf->__PVT__SD_Card_Controller__DOT__spirxdatai__DOT__gearbox 
         = __Vdly__SD_Card_Controller__DOT__spirxdatai__DOT__gearbox;
     vlSelf->__PVT__SD_Card_Controller__DOT__spirxdatai__DOT__crc_byte 
@@ -1265,6 +1258,9 @@ VL_INLINE_OPT void Vaquila_testharness_aquila_testharness___sequent__TOP__aquila
         = __Vdly__SD_Card_Controller__DOT__spitxdatai__DOT__gearbox;
     vlSelf->__PVT__SD_Card_Controller__DOT__spicmdi__DOT__shift_data 
         = __Vdly__SD_Card_Controller__DOT__spicmdi__DOT__shift_data;
+    vlSelf->__PVT__wishbone_stb = ((IData)(vlSymsp->TOP.rst_n) 
+                                   & ((IData)(vlSelf->__PVT__Core2Wishbone_0__DOT__wb_stb) 
+                                      & (~ (IData)(vlSelf->__PVT__Core2Wishbone_0__DOT__wb_stb_r))));
     vlSelf->__PVT__SD_Card_Controller__DOT__r_cmd_err 
         = __Vdly__SD_Card_Controller__DOT__r_cmd_err;
     vlSelf->__PVT__SD_Card_Controller__DOT__ll_cmd_stb 
@@ -1289,6 +1285,7 @@ VL_INLINE_OPT void Vaquila_testharness_aquila_testharness___sequent__TOP__aquila
         = __Vdly__SD_Card_Controller__DOT__cmd_sent;
     vlSelf->__PVT__SD_Card_Controller__DOT__cmd_busy 
         = __Vdly__SD_Card_Controller__DOT__cmd_busy;
+    vlSelf->__PVT__Core2Wishbone_0__DOT__wb_stb_r = vlSelf->__PVT__Core2Wishbone_0__DOT__wb_stb;
     vlSelf->__PVT__SD_Card_Controller__DOT__spirxdatai__DOT__first_crc_data 
         = (0xffffU & ((IData)(vlSelf->__PVT__SD_Card_Controller__DOT__spirxdatai__DOT__crc_data) 
                       << 1U));
@@ -1492,4 +1489,6 @@ VL_INLINE_OPT void Vaquila_testharness_aquila_testharness___combo__TOP__aquila_t
     vlSelf->SD_Card_Controller__DOT____Vcellinp__spitxdatai____pinNumber2 
         = ((IData)(vlSelf->__PVT__SD_Card_Controller__DOT__w_reset) 
            | (IData)(vlSelf->__PVT__SD_Card_Controller__DOT__r_cmd_err));
+    vlSelf->__PVT__Core2Wishbone_0__DOT__wb_stb = ((IData)(vlSelf->__Vcellinp__Core2Wishbone_0__S_DEVICE_strobe_i) 
+                                                   & (~ (IData)(vlSelf->__PVT__wishbone_ack)));
 }

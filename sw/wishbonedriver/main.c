@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <time.h>
-
+#include <string.h>
 #include "file_read.h"
 #include "./sdspidriver/sdspidrv.h"
 
@@ -17,36 +17,24 @@ int main()
     SDSPI *sdhw = (SDSPI *)SDSPI_ADDR;
     SDSPIDRV *sdcard;
     sdcard = sdspi_init(sdhw);
-    // if (sdcard != NULL) {                 
-    //     printf("SD init failed\n");
-    //     free(sdcard);                     
-    //     return -1;
-    // }
-
-    printf("SD card is ready!\n");
-
-    // try to read first sector
-    char sector_buf[512];
     
-
-    char write_buf[512];
-     for (int i = 0; i < 512; i++) {
-        write_buf[i] = 'b';
+    printf("SD Card initialized.\n");
+    char wbuf[512], rbuf[512];
+    for (int i = 0; i < 512; i++) wbuf[i] = i & 0xFF;
+    if (sdspi_write(sdcard, 0, 1, wbuf) != 0) {
+        printf("Write failed.\n");
+        exit(0);
     }
+    memset(rbuf, 0, 512);
+    sdspi_read(sdcard, 0, 1, rbuf);
 
-    sdspi_write(sdcard, 5000000, 1, write_buf);
-    sdspi_read(sdcard, 5000000, 1, sector_buf);
-
-    
-    
-    // print the sector
-    printf("Start to print the first sector\n");
     for (int i = 0; i < 512; i++) {
-        printf("%c ", sector_buf[i]);
-        if(i % 8 == 7){
-            printf("\n");
+        if (wbuf[i] != rbuf[i]) {
+            printf("Mismatch at %d: wrote 0x%02x, read 0x%02x\n", i, wbuf[i], rbuf[i]);
+            exit(0);
         }
     }
-    return 0;
-}
 
+    printf("Read/Write test passed.\n");
+    exit(0);
+}

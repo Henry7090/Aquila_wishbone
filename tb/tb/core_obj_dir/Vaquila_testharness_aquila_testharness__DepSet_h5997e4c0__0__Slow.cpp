@@ -160,6 +160,8 @@ VL_ATTR_COLD void Vaquila_testharness_aquila_testharness___settle__TOP__aquila_t
                       | (~ (IData)(vlSelf->__PVT__SD_Card_Controller__DOT__r_cmd_busy))) 
                      | ((IData)(vlSelf->__PVT__SD_Card_Controller__DOT__lowlevel__DOT__byte_accepted) 
                         | (~ (IData)(vlSelf->__PVT__SD_Card_Controller__DOT__lowlevel__DOT__r_idle))))));
+    vlSelf->__PVT__Core2Wishbone_0__DOT__wb_stb = ((IData)(vlSelf->__Vcellinp__Core2Wishbone_0__S_DEVICE_strobe_i) 
+                                                   & (~ (IData)(vlSelf->__PVT__wishbone_ack)));
 }
 
 VL_ATTR_COLD void Vaquila_testharness_aquila_testharness___settle__TOP__aquila_testharness__1(Vaquila_testharness_aquila_testharness* vlSelf) {
