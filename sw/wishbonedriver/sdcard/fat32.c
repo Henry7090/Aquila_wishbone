@@ -62,6 +62,7 @@
 #include <string.h>
 #include "sd.h"
 #include "fat32.h"
+#include "sdspidrv.h"
 
 #define PARTITION_NO 0          // Always read from the first partition.
 
@@ -81,7 +82,7 @@ static uint8_t lba_buf[BLOCK_SIZE]; // for copy_file() and read_file()
  *
  *   returns: zero if fail else the file size in bytes.
  */
-int copy_file(uint8_t *dst, boot_sector *bs, uint32_t first_lba, dir_entry *entry)
+int copy_file(uint8_t *dst, boot_sector *bs, uint32_t first_lba, dir_entry *entry, SDSPIDRV *dev)
 {
     int LBAPerSec = bs->BPB_BytsPerSec / BLOCK_SIZE;
     int LBAPerClus = bs->BPB_SecPerClus * LBAPerSec;
@@ -98,7 +99,8 @@ int copy_file(uint8_t *dst, boot_sector *bs, uint32_t first_lba, dir_entry *entr
 
     while (cluster_num < 0x0FFFFFF8)
     {
-        int res = sd_copy(dst, data_start_lba+(cluster_num-2)*LBAPerClus, LBAPerClus);
+        printf("1 sdspi read\n");
+        int res = sdspi_read(dev, (data_start_lba+(cluster_num-2)*LBAPerClus), LBAPerClus, dst);
         if (res != 0)
         {
             printf("SD card failed at 170!\n");
@@ -107,7 +109,7 @@ int copy_file(uint8_t *dst, boot_sector *bs, uint32_t first_lba, dir_entry *entr
         }
         cnt++;
         dst += bs->BPB_SecPerClus*bs->BPB_BytsPerSec;
-        cluster_num = get_next_cluster(cluster_num, &buf_base, fat_base);
+        cluster_num = get_next_cluster(cluster_num, &buf_base, fat_base, dev);
     }
     // printf("Total clusters loaded: %d.\n", cnt);
     return entry->DIR_FileSize;
@@ -125,14 +127,15 @@ int copy_file(uint8_t *dst, boot_sector *bs, uint32_t first_lba, dir_entry *entr
  *
  *   returns: next cluster number of target
  */
-uint32_t get_next_cluster(uint32_t target, int *buf_base, uint32_t fat_start_lba)
+uint32_t get_next_cluster(uint32_t target, int *buf_base, uint32_t fat_start_lba, SDSPIDRV *dev)
 {
     uint32_t base = target / MAX_FAT_SIZE;
     uint32_t offset = target % MAX_FAT_SIZE;
 
     if (*buf_base == -1 || base != *buf_base)
     {
-        sd_copy(fat, fat_start_lba+base*FAT_BUF_LBA_SIZE, FAT_BUF_LBA_SIZE);
+        printf("2 sdspi read\n");
+        sdspi_read(dev, fat_start_lba+base*FAT_BUF_LBA_SIZE, FAT_BUF_LBA_SIZE ,fat);
         *buf_base = base;
     }
     return fat[offset];
@@ -147,16 +150,17 @@ uint32_t get_next_cluster(uint32_t target, int *buf_base, uint32_t fat_start_lba
  *
  *   returns: first lab of partition if success else zero
  */
-uint64_t get_partition_first_lba(uint32_t part_no)
+uint64_t get_partition_first_lba(uint32_t part_no, SDSPIDRV *dev)
 {
+    printf("get_partition_first_lba function\n");
     int res;
     uint64_t first_lba;
 
-    if ((res = init_sd()) != 0)
-    {
-        printf("Can't initialize the SD card ... exiting %d.\n", res);
-        return 0;
-    }
+    // if ((res = init_sd()) != 0)
+    // {
+    //     printf("Can't initialize the SD card ... exiting %d.\n", res);
+    //     return 0;
+    // }
 
     //printf("SD card initialized!\n");
 
@@ -166,7 +170,8 @@ uint64_t get_partition_first_lba(uint32_t part_no)
     // ============================
     //       Try to read MBR
     // ============================
-    res = sd_copy(lba_buf, 0, 1);   //lba0
+    printf("3 sdspi read\n");
+    res = sdspi_read(dev, 0, 1,lba_buf);   //lba0
     if (res != 0)
     {
         printf("SD card failed with returned value: %d\n", res);
@@ -192,7 +197,8 @@ uint64_t get_partition_first_lba(uint32_t part_no)
 		// ============================
 		//       Try to read GPT
 		// ============================
-        res = sd_copy(lba_buf, 1, 1);   //lba1
+        printf("4 sdspi read\n");
+        res = sdspi_read(dev, 1, 1,lba_buf);   //lba1
 
         if (res != 0)
         {
@@ -203,7 +209,8 @@ uint64_t get_partition_first_lba(uint32_t part_no)
 
         gpt_pth_t *lba1 = (gpt_pth_t *) lba_buf;
         uint32_t partition_entries_lba = (uint32_t) lba1->partition_entries_lba;
-        res = sd_copy(lba_buf, partition_entries_lba, 1);
+        printf("5 sdspi read\n");
+        res = sdspi_read(dev, partition_entries_lba, 1, lba_buf);
 
         if (res != 0)
         {
@@ -281,8 +288,9 @@ void long2short(char *fname, char *fname83)
  *
  *   returns: file size if success, 0 if error occurred.
  */
-uint32_t read_file(char *fname, uint8_t *fdata)
+uint32_t read_file(char *fname, uint8_t *fdata, SDSPIDRV *dev)
 {
+    printf("read_file function\n");
     uint32_t first_lba;
     uint16_t fat_start_sector;
     uint32_t fat_sectors;
@@ -298,11 +306,13 @@ uint32_t read_file(char *fname, uint8_t *fdata)
 
     // File name conversion to 8+3 format.
     long2short(fname, filename);
-    first_lba = get_partition_first_lba(PARTITION_NO);
+    first_lba = get_partition_first_lba(PARTITION_NO, dev);
     if (first_lba == 0) return 0;
 
     // Parse the boot section.
-    sd_copy(lba_buf, first_lba, 1);
+    printf("6 sdspi read\n");
+    printf("first lba = %d\n", first_lba);
+    sdspi_read(dev, first_lba, 1, lba_buf);
     bs = (boot_sector *) lba_buf;
 
     fat_start_sector = bs->BPB_RsvdSecCnt;
@@ -327,7 +337,8 @@ uint32_t read_file(char *fname, uint8_t *fdata)
     do
     {
         // Read the root directory block from the SD card.
-        sd_copy(clus_buf, dat_base + (cluster_num-2)*LBAPerClus, LBAPerClus);
+        printf("7 sdspi read\n");
+        sdspi_read(dev, dat_base + (cluster_num-2)*LBAPerClus, LBAPerClus, clus_buf);
         entries = (dir_entry *) clus_buf;
         for (idx = 0; idx < BytesPerClus/32; idx++)
         {
@@ -337,15 +348,16 @@ uint32_t read_file(char *fname, uint8_t *fdata)
                 if (!strncmp((char *) file_entry->DIR_Name, filename, 11))
                 {
                     // Found the file, now start loading.
-                    size = copy_file(fdata, bs, first_lba, file_entry);
+                    size = copy_file(fdata, bs, first_lba, file_entry, dev);
                     break;
                 }
             }
         }
         if (idx == BytesPerClus/32) break;
-        cluster_num = get_next_cluster(cluster_num, &buf_base, fat_base);
+        cluster_num = get_next_cluster(cluster_num, &buf_base, fat_base, dev);
     } while (cluster_num < 0x0FFFFFF8);
 
     free(clus_buf);
+    printf("leave read file function\n");
     return size;
 }

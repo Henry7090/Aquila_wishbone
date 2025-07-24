@@ -5,6 +5,8 @@
         "config.h": "c",
         "stdlib.h": "c",
         "inttypes.h": "c",
-        "sdspidrv.h": "c"
+        "sdspidrv.h": "c",
+        "string.h": "c",
+        "stdint.h": "c"
     }
 }

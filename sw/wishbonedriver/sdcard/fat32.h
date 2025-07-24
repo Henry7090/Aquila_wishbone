@@ -54,7 +54,7 @@
 // =============================================================================
 #pragma once
 #include <stdint.h>
-
+#include "sdspidrv.h"
 #define BLOCK_SIZE 512       // disk block size.
 #define CLUSTER_SIZE 8192    // disk cluster size.
 #define MAX_FAT_SIZE 512     // max FAT entry number, must be multiple of 128
@@ -188,7 +188,7 @@ typedef struct __attribute__ ((packed))
  *
  *   returns: zero if success else non-zero int
  */
-int copy_file(uint8_t *dst, boot_sector *bs, uint32_t first_lba, dir_entry *entry);
+int copy_file(uint8_t *dst, boot_sector *bs, uint32_t first_lba, dir_entry *entry,  SDSPIDRV *dev);
 
 /* test for sd_write */
 // int write_file(boot_sector *bs, uint32_t first_lba, dir_entry *entry, char *lba_buf);
@@ -205,7 +205,7 @@ int copy_file(uint8_t *dst, boot_sector *bs, uint32_t first_lba, dir_entry *entr
  *
  *   returns: next cluster number of target
  */
-uint32_t get_next_cluster(uint32_t target, int *buf_base, uint32_t fat_start_lba);
+uint32_t get_next_cluster(uint32_t target, int *buf_base, uint32_t fat_start_lba,  SDSPIDRV *dev);
 
 /*
  * Function: get_partintion_first_lba
@@ -216,7 +216,7 @@ uint32_t get_next_cluster(uint32_t target, int *buf_base, uint32_t fat_start_lba
  *
  *   returns: first lab of partition if success else zero
  */
-uint64_t get_partition_first_lba(uint32_t partition_no);
+uint64_t get_partition_first_lba(uint32_t partition_no,  SDSPIDRV *dev);
 
 /*
  * Function: read_file
@@ -229,5 +229,5 @@ uint64_t get_partition_first_lba(uint32_t partition_no);
  *
  *   returns: zero if success, -1 if error occurred.
  */
-uint32_t read_file(char *fname, uint8_t *fdata);
+uint32_t read_file(char *fname, uint8_t *fdata,  SDSPIDRV *dev);
 

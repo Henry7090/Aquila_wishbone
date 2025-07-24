@@ -71,8 +71,13 @@ int main()
     printf("\n(1) Reading the test images, labels, and neural weights.\n");
     tick = clock();
     float_t *weights = read_weights("weights.dat");
-    float_t **images = read_images("test-images.dat", &n_images, &n_rows, &n_cols, 0);
-    uint8_t *labels = read_labels("test-labels.dat");
+    // float_t **images = read_images("test-images.dat", &n_images, &n_rows, &n_cols, 0);
+    // uint8_t *labels = read_labels("test-labels.dat");
+    
+    for(int i = 0; i < 20; i++){
+        printf("weights[%d] = %f\n", i, weights[i]);
+    }
+    /*
     image_size = n_rows*n_cols;
     tick = (clock() - tick)/ticks_per_msec;
     printf("It took %ld msec to read files from the SD card.\n\n", tick);
@@ -111,7 +116,7 @@ int main()
     free(images);
     free(labels);
     free(weights);
-
+    */
     return 0;
 }
 

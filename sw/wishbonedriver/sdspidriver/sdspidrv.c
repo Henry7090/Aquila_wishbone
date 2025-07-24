@@ -149,7 +149,7 @@ int	sdcard_err = 0;
 //
 // If set will produce verbose output via txstr() and txhex().  These functions
 // are roughly equivalent to printf("%s",X) and printf("%08x", X) respectively.
-static const int	SDDEBUG = 1;
+static const int	SDDEBUG = 0;
 
 //
 // SDINFO
@@ -1021,7 +1021,6 @@ SDSPIDRV *sdspi_init(SDSPI *dev) {
 		// gbl_sector_size = BLOCK_LEN;
 		BLOCKNR  = (C_SIZE+1ul) * (1ul << (C_SIZE_MULT+2));
 		dv->d_sector_count = BLOCKNR;
-		printf("BLOCKNR = %d\n",BLOCKNR);
 		// Get the size of an erasable sector
 		SECTOR_SIZE  = (dv->d_CSD[10]& 0x0ff);
 		SECTOR_SIZE |= (dv->d_CSD[11]& 0x0ff) | (SECTOR_SIZE << 8);
@@ -1110,12 +1109,6 @@ SDSPIDRV *sdspi_init(SDSPI *dev) {
 		dv->d_block_size   = 0;
 		return dv;
 	}
-	printf("dv->d_OCR = %d\n", dv->d_OCR);
-	printf("dv->d_sector_count = %d\n", dv->d_sector_count);
-	printf("dv->d_block_size = %d\n", dv->d_block_size);
-	// }}}
-	uintptr_t ctrl_addr2 = (uintptr_t)&dev;
-	printf("sd_ctrl @ 0x%08" PRIXPTR "\n", ctrl_addr2);
 	return dv;
 }
 // }}}
@@ -1124,10 +1117,7 @@ int	sdspi_read(SDSPIDRV *dev, const unsigned sector, const unsigned count, char 
 	// {{{
 	unsigned	*ubuf = (unsigned *)buf, k;
 	int		j, st = 0;
-	printf("dv->d_OCR = %d\n", dev->d_OCR);
-	printf("dv->d_sector_count = %d\n", dev->d_sector_count);
-	printf("dv->d_block_size = %d\n", dev->d_block_size);
-
+	
 	if (SDDEBUG) {
 		txstr("SDCARD-READ: ");
 		txhex(sector);
@@ -1137,6 +1127,8 @@ int	sdspi_read(SDSPIDRV *dev, const unsigned sector, const unsigned count, char 
 		} txstr("\r\n");
 	} if (sector + count > dev->d_sector_count){
 		printf("RES_PARERR\n");
+		printf("sector + count  = %d\n", sector+count);
+		printf("dev->d_sector_count = %d\n", dev->d_sector_count);
 		return RES_PARERR;
 	}
 	for(k=0; k<count; k++) {
@@ -1173,8 +1165,15 @@ int	sdspi_read(SDSPIDRV *dev, const unsigned sector, const unsigned count, char 
 			CLEAR_DCACHE;
 		} else
 #endif
-			for(j=0; j<512/4; j++)
-				ubuf[j] = dev->d_dev->sd_fifo[0];
+			for (j = 0; j < 512 / 4; j++) {
+			    uint32_t raw = dev->d_dev->sd_fifo[0];
+
+			    ubuf[j] = ((raw >> 24) & 0x000000FF) |
+			              ((raw >> 8)  & 0x0000FF00) |
+			              ((raw << 8)  & 0x00FF0000) |
+			              ((raw << 24) & 0xFF000000);
+
+			}
 
 		if (SDDEBUG && SDINFO)
 			sdspi_dump_sector(ubuf);

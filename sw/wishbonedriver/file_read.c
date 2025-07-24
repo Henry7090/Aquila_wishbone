@@ -25,18 +25,19 @@
 #include "fat32.h"
 #include "file_read.h"
 #include "config.h"
+#include "./sdspidriver/sdspidrv.h"
 
 // Our FAT32 file I/O routine need a large buffer area to read in
 // the entire file before processing. the Arty board has 256MB DRAM.
 uint8_t *fbuf  = (uint8_t *) 0x81000000L;
 
-float_t **read_images(char *filename, int *n_images, int *n_rows, int *n_cols, int padding)
+float_t **read_images(char *filename, int *n_images, int *n_rows, int *n_cols, int padding, SDSPIDRV *dev)
 {
     uint8_t *iptr;
     float_t **images;
     int idx, jdx, size, row, col;
 
-    read_file(filename, fbuf);
+    read_file(filename, fbuf, dev);
     iptr = fbuf;
     iptr += sizeof(int); // skip the ID of the file.
 
@@ -77,12 +78,12 @@ float_t **read_images(char *filename, int *n_images, int *n_rows, int *n_cols, i
     return images;
 }
 
-uint8_t *read_labels(char *filename)
+uint8_t *read_labels(char *filename, SDSPIDRV *dev)
 {
     uint8_t *labels;
     int n_labels;
 
-    n_labels = read_file(filename, fbuf) - 8;
+    n_labels = read_file(filename, fbuf, dev) - 8;
     if ((labels = (uint8_t *) malloc(n_labels)) == NULL)
     {
         printf("read_labels: out of memory.\n");
@@ -93,12 +94,13 @@ uint8_t *read_labels(char *filename)
     return labels;
 }
 
-float_t *read_weights(char *filename)
+float_t *read_weights(char *filename, SDSPIDRV *dev)
 {
+    printf("read_weights function\n");
     int size;
     float_t *weights;
 
-    size = read_file(filename, fbuf);
+    size = read_file(filename, fbuf, dev);
     if ((weights = (float_t *) malloc(size)) == NULL)
     {
         printf("read_weights(): Out of memory.\n");
