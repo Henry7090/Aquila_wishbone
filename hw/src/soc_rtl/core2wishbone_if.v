@@ -95,16 +95,18 @@ always @(posedge clk_i)begin
 end
 
 //  wb_stb_o
+reg wb_stb_r;
+wire wb_stb;
 always @(posedge clk_i)begin
-    if (rst_i)
-        wb_stb_o <= 0;
-    else if(S_DEVICE_strobe_i)
-        wb_stb_o <= 1;
-    else if(wb_ack_i)
-        wb_stb_o <= 0;
-    else 
-        wb_stb_o <= wb_stb_o;
+    wb_stb_r <= wb_stb;
 end
+always @(posedge clk_i)begin
+    if(rst_i) wb_stb_o <= 0;
+    else if(wb_stb && !wb_stb_r) wb_stb_o <= 1;
+    else wb_stb_o <= 0;
+end
+
+assign wb_stb = S_DEVICE_strobe_i && wb_ack_i == 0;
 
 //  wb_we_o
 always @(posedge clk_i)begin
@@ -123,8 +125,13 @@ always @(posedge clk_i) // Write Addresses
 begin
     if (rst_i)
         wb_addr_o <= 0;
-    else if (S_DEVICE_strobe_i & S_DEVICE_rw_i)
-        wb_addr_o <= S_DEVICE_addr_i[AXI_ADDR_LEN - 1 : 0];
+    else if (S_DEVICE_strobe_i) begin
+        if(S_DEVICE_addr_i[3:0] == 12) wb_addr_o <= 3;
+        else if(S_DEVICE_addr_i[3:0] == 8) wb_addr_o <= 2;
+        else if(S_DEVICE_addr_i[3:0] == 4) wb_addr_o <= 1;
+        else if(S_DEVICE_addr_i[3:0] == 0) wb_addr_o <= 0;
+        else wb_addr_o <= wb_addr_o;
+    end
 end
 
 // 	wb_data_o
@@ -135,7 +142,7 @@ assign wb_sel_o = S_DEVICE_byte_enable_i;
 
 
 //  S_DEVICE_data_ready_o
-assign S_DEVICE_data_ready_o = S_DEVICE_strobe_i & wb_ack_i;
+assign S_DEVICE_data_ready_o = wb_ack_i;
 
 //  S_DEVICE_data_o
 assign S_DEVICE_data_o = wb_data_i;

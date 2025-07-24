@@ -17,7 +17,7 @@ if { $vmajor > 2020 } {
 set origin_dir "."
 
 # Set the project name
-set proj_name "aquila_dram"
+set proj_name "aquila_wishbonespi"
 
 # Create project
 create_project ${proj_name} ${origin_dir}/${proj_name} -part xc7k325tffg676-2

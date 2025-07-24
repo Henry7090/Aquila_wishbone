@@ -357,33 +357,43 @@ UART(
 // -----------------------------------------------------------------------------
 //  SD Card SPI Controller with AXI bus interface.
 //
-wire                axi_arvalid;
-wire                axi_awvalid;
-wire [6 : 0]        axi_awaddr;
-wire [6 : 0]        axi_araddr;
-wire                axi_arready;
-wire                axi_awready;
-wire [XLEN/8-1 : 0] axi_wstrb;
-wire                axi_wready;
-wire                axi_rready;
-wire                axi_wvalid;
-wire                axi_rvalid;
-wire [1 : 0]        axi_bresp;
-wire [1 : 0]        axi_rresp;
-wire                axi_bvalid;
-wire                axi_bready;
-wire [XLEN-1 : 0]   axi_rdata;
-wire [XLEN-1 : 0]   axi_wdata;
+// wire                axi_arvalid;
+// wire                axi_awvalid;
+// wire [6 : 0]        axi_awaddr;
+// wire [6 : 0]        axi_araddr;
+// wire                axi_arready;
+// wire                axi_awready;
+// wire [XLEN/8-1 : 0] axi_wstrb;
+// wire                axi_wready;
+// wire                axi_rready;
+// wire                axi_wvalid;
+// wire                axi_rvalid;
+// wire [1 : 0]        axi_bresp;
+// wire [1 : 0]        axi_rresp;
+// wire                axi_bvalid;
+// wire                axi_bready;
+// wire [XLEN-1 : 0]   axi_rdata;
+// wire [XLEN-1 : 0]   axi_wdata;
+
+wire                   wishbone_cyc;
+wire                   wishbone_stb;
+wire                   wishbone_we;
+wire  [2-1:0]  	       wishbone_addr;
+wire  [XLEN-1:0]	   wishbone_data2sdcard;
+wire  [XLEN/8 - 1:0]   wishbone_sel;
+wire  		           wishbone_stall;
+wire  		           wishbone_ack;
+wire  [XLEN-1:0]       wishbone_data2core;
 
 // The following signals are unused output signals from the Xilinx AXI SPI IP:
-wire              io0_t_dummy, io1_t_dummy, sck_t_dummy, ss_t_dummy;
-wire              io1_o_dummy, irpt_dummy;
+// wire              io0_t_dummy, io1_t_dummy, sck_t_dummy, ss_t_dummy;
+// wire              io1_o_dummy, irpt_dummy;
 
 // ---------------------------------------
 //  Aquila local bus to AXI bus interface
 // ---------------------------------------
-core2axi_if #(.XLEN(32), .AXI_ADDR_LEN(7))
-Core2AXI_0 (
+core2wishbone_if #(.XLEN(32), .AXI_ADDR_LEN(7))
+Core2Wishbone_0 (
     .clk_i(clk),
     .rst_i(rst),
 
@@ -396,72 +406,50 @@ Core2AXI_0 (
     .S_DEVICE_data_ready_o(spi_ready),
     .S_DEVICE_data_o(spi_dout),
 
-    // Converted AXI master interface signals.
-    .m_axi_awaddr(axi_awaddr),   // Master write address signals.
-    .m_axi_awvalid(axi_awvalid), // Master write addr/ctrl is valid.
-    .m_axi_awready(axi_awready), // Slave ready to receive write command.
-    .m_axi_wdata(axi_wdata),     // Master write data signals.
-    .m_axi_wstrb(axi_wstrb),     // Master byte select signals.
-    .m_axi_wvalid(axi_wvalid),   // Master write data is valid.
-    .m_axi_wready(axi_wready),   // Slave ready to receive write data.
-    .m_axi_bresp(axi_bresp),     // Slave write-op response signal.
-    .m_axi_bvalid(axi_bvalid),   // Slave write-op response is valid.
-    .m_axi_bready(axi_bready),   // Master ready to receive write response.
-    .m_axi_araddr(axi_araddr),   // Master read address signals.
-    .m_axi_arvalid(axi_arvalid), // Master read addr/ctrl is valid.
-    .m_axi_arready(axi_arready), // Slave is ready to receive read command.
-    .m_axi_rdata(axi_rdata),     // Slave read data signals.
-    .m_axi_rresp(axi_rresp),     // Slave read-op response signal
-    .m_axi_rvalid(axi_rvalid),   // Slave read response is valid.
-    .m_axi_rready(axi_rready)    // Master ready to receive read response.
+    // Converted Wishbone master interface signals.
+    .wb_cyc_o(wishbone_cyc),
+    .wb_stb_o(wishbone_stb),
+    .wb_we_o(wishbone_we),
+    .wb_addr_o(wishbone_addr),
+    .wb_data_o(wishbone_data2sdcard),
+    .wb_sel_o(wishbone_sel),
+    .wb_stall_i(wishbone_stall),
+    .wb_ack_i(wishbone_ack),
+    .wb_data_i(wishbone_data2core)
 );
+
 
 // ----------------------------------
 //  SPI controller
 // ----------------------------------
-//  This controller connects to the PMOD microSD module in
-//  the JD connector of the Arty A7-100T, or the SD socket of
-//  KC705, Genesys2, K7BaseC, or QMCore.
-//
-axi_quad_spi_0 SD_Card_Controller(
+sdspi SD_Card_Controller(
 
-    // Interface ports to the Aquila SoC.
-    .s_axi_aclk(clk),
-    .s_axi_aresetn(~rst),
-    .s_axi_awaddr(axi_awaddr),
-    .s_axi_awvalid(axi_awvalid),        // master signals write addr/ctrl valid.
-    .s_axi_awready(axi_awready),        // slave ready to fetch write address.
-    .s_axi_wdata(axi_wdata),            // write data to the slave.
-    .s_axi_wstrb(axi_wstrb),            // byte select signal for write operation.
-    .s_axi_wvalid(axi_wvalid),          // master signals write data is valid.
-    .s_axi_wready(axi_wready),          // slave ready to accept the write data.
-    .s_axi_araddr(axi_araddr),
-    .s_axi_arready(axi_arready),        // slave ready to fetch read address.
-    .s_axi_arvalid(axi_arvalid),        // master signals read addr/ctrl valid.
-    .s_axi_bready(axi_bready),          // master is ready to accept the response.
-    .s_axi_bresp(axi_bresp),            // reponse code from the slave.
-    .s_axi_bvalid(axi_bvalid),          // slave has sent the respond signal.
-    .s_axi_rdata(axi_rdata),            // read data from the slave.
-    .s_axi_rready(axi_rready),          // master is ready to accept the read data.
-    .s_axi_rresp(axi_rresp),            // slave sent read response.
-    .s_axi_rvalid(axi_rvalid),          // slave signals read data ready.
-
-    // Interface ports to the SD Card.
-    .ext_spi_clk(clk),
-    .io0_i(1'b0),
-    .io0_o(spi_mosi),
-    .io0_t(io0_t_dummy),                // tag signal for mosi (ignore it)
-    .io1_i(spi_miso),
-    .io1_o(io1_o_dummy),                // output signal for io1 (ignore it)
-    .io1_t(io1_t_dummy),                // tag signal for miso (ignore it)
-    .sck_i(1'b0),
-    .sck_o(spi_sck),
-    .sck_t(sck_t_dummy),                // tag signal for sck (ignore it)
-    .ss_i(1'b0),
-    .ss_o(spi_ss),
-    .ss_t(ss_t_dummy),                  // tag signal for ss (ignore it)
-    .ip2intc_irpt(irpt_dummy)           // interrupt from SPI controller (ignore it)
+    .i_clk(clk),
+    .i_sd_reset(rst),
+	// Wishbone interface
+	.i_wb_cyc(wishbone_cyc),
+    .i_wb_stb(wishbone_stb),
+    .i_wb_we(wishbone_we),
+	.i_wb_addr(wishbone_addr),
+	.i_wb_data(wishbone_data2sdcard),
+	.i_wb_sel(wishbone_sel),
+	.o_wb_stall(wishbone_stall),
+	.o_wb_ack(wishbone_ack),
+	.o_wb_data(wishbone_data2core),
+	// SDCard interface
+	.o_cs_n(spi_ss),
+    .o_sck(spi_sck),
+    .o_mosi(spi_mosi),
+	.i_miso(spi_miso), 
+    .i_card_detect(1'b1),
+	// Our interrupt
+	.o_int(),
+	// .. and whether or not we can use the SPI port
+	.i_bus_grant(1'b1),
+	// And some wires for debugging it all
+	.o_debug()
 );
+
 
 `ifdef ENABLE_DDRx_MEMORY
 // ----------------------------------------------------------------------------
